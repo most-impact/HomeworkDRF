@@ -7,7 +7,7 @@ app_name = CourseConfig.name
 
 
 router = SimpleRouter()
-router.register('', CourseViewSet)
+router.register('courses', CourseViewSet)
 
 urlpatterns = [
     path("lessons/", LessonListApiView.as_view(), name='lessons_list'),
@@ -16,6 +16,5 @@ urlpatterns = [
     path("lessons/<int:pk>/delete/", LessonDestroyAPIView.as_view(), name='lessons_destroy'),
     path("lessons/<int:pk>/update/", LessonUpdateApiView.as_view(), name='lessons_update'),
 ]
-
 
 urlpatterns += router.urls
