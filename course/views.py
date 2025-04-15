@@ -1,38 +1,73 @@
+from datetime import timezone
+import stripe
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.generics import (
+    CreateAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    UpdateAPIView,
+    DestroyAPIView,
+    get_object_or_404,
+)
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
-from course.models import Course, Lesson
-from course.serializers import CourseSerializer, LessonSerializer, LessonDetailSerializer
+
+from course.models import Course, Lessons
+from course.serializers import CourseSerializer, LessonsSerializer
+from users.permissions import IsModer, IsOwner
 
 
+@method_decorator(name='list', decorator=swagger_auto_schema(
+    operation_description="description from swagger_auto_schema via method_decorator"))
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
-    def partial_update(self, request, *args, **kwargs):
-        return super().partial_update(request, *args, **kwargs)
+    def get_permissions(self):
+        if self.action in ["create"]:
+            self.permission_classes = (~IsModer,)
+        elif self.action in ["update", "retrieve"]:
+            self.permission_classes = (IsModer | IsOwner,)
+        elif self.action == "destroy":
+            self.permission_classes = (IsOwner | ~IsModer,)
+        return super().get_permissions()
 
 
-class LessonCreateApiView(CreateAPIView):
-    queryset = Lesson.objects.all()
-    serializer_class = LessonSerializer
+class LessonsViewSet(ModelViewSet):
+    queryset = Lessons.objects.all()
+    serializer_class = LessonsSerializer
+    permission_classes = (~IsModer, IsAuthenticated)
 
 
-class LessonListApiView(ListAPIView):
-    queryset = Lesson.objects.all()
-    serializer_class = LessonSerializer
+class LessonsCreateApiView(CreateAPIView):
+    queryset = Lessons.objects.all()
+    serializer_class = LessonsSerializer
+    permission_classes = (IsAuthenticated,)
 
 
-class LessonRetrieveAPIView(RetrieveAPIView):
-    queryset = Lesson.objects.all()
-    serializer_class = LessonDetailSerializer
+class LessonsListAPIView(ListAPIView):
+    queryset = Lessons.objects.all()
+    serializer_class = LessonsSerializer
 
 
+class LessonsRetrieveAPIView(RetrieveAPIView):
+    queryset = Lessons.objects.all()
+    serializer_class = LessonsSerializer
+    permission_classes = (IsAuthenticated, IsModer | IsOwner)
 
-class LessonUpdateApiView(UpdateAPIView):
-    queryset = Lesson.objects.all()
-    serializer_class = LessonSerializer
+
+class LessonsUpdateAPIView(UpdateAPIView):
+    queryset = Lessons.objects.all()
+    serializer_class = LessonsSerializer
+    permission_classes = (IsAuthenticated, IsModer | IsOwner)
 
 
-class LessonDestroyAPIView(DestroyAPIView):
-    queryset = Lesson.objects.all()
-    serializer_class = LessonSerializer
+class LessonsDestroyAPIView(DestroyAPIView):
+    queryset = Lessons.objects.all()
+    serializer_class = LessonsSerializer
+    permission_classes = (IsAuthenticated, IsOwner | ~IsModer)

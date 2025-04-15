@@ -1,32 +1,36 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework import serializers
-from course.models import Course, Lesson
+from rest_framework.fields import SerializerMethodField
+from rest_framework.serializers import ModelSerializer
 
 
-class LessonSerializer(ModelSerializer):
-    class Meta:
-        model = Lesson
-        fields = '__all__'
-
-
-class CourseSerializer(serializers.ModelSerializer):
-    lessons = LessonSerializer(many=True, read_only=True)
-    count_lessons = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Course
-        fields = ("id", "title", "description", "preview", "lessons", "count_lessons")
-
-    def get_count_lessons(self, course):
-        return course.lessons.count()
+from course.models import Course, Lessons
 
 
 class LessonDetailSerializer(ModelSerializer):
     count_lessons_with_same_course = SerializerMethodField()
 
     def get_count_lessons_with_same_course(self, lesson):
-        return Lesson.objects.filter(course=lesson.reference).count()
+        return Lessons.objects.filter(course=lesson.course).count()
 
     class Meta:
-        model = Lesson
-        fields = ("title", "description", "get_count_lessons_with_same_course")
+        model = Lessons
+        fields = ("name", "course", "count_lessons_with_same_course")
+
+
+class LessonsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Lessons
+        fields = "__all__"
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    lessons = LessonsSerializer(many=True, read_only=True)
+    is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Course
+        fields = ["id", "title", "preview", "description", "lessons", "is_subscribed"]
+
+    def get_count_lessons(self, course):
+        return course.lessons.count()
