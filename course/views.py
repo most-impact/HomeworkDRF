@@ -22,6 +22,7 @@ from course.serializers import CourseSerializer, LessonsSerializer
 from users.models import Payments
 from users.permissions import IsModer, IsOwner
 from users.services import create_stripe_product, create_stripe_price, create_stripe_session
+from .tasks import send_course_update_notifications
 
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
@@ -38,7 +39,19 @@ class CourseViewSet(ModelViewSet):
         elif self.action == "destroy":
             self.permission_classes = (IsOwner | ~IsModer,)
         return super().get_permissions()
+
     pagination_class = CustomPagination
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        send_course_update_notifications.delay(instance.id)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 class LessonsViewSet(ModelViewSet):
     queryset = Lessons.objects.all()
     serializer_class = LessonsSerializer
