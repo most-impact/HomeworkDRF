@@ -16,7 +16,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-
 from course.models import Course, Lessons, Subscription
 from course.paginations import CustomPagination
 from course.serializers import CourseSerializer, LessonsSerializer
@@ -39,46 +38,31 @@ class CourseViewSet(ModelViewSet):
         elif self.action == "destroy":
             self.permission_classes = (IsOwner | ~IsModer,)
         return super().get_permissions()
-
     pagination_class = CustomPagination
-
-
 class LessonsViewSet(ModelViewSet):
     queryset = Lessons.objects.all()
     serializer_class = LessonsSerializer
     permission_classes = (~IsModer, IsAuthenticated)
-
-
 class LessonsCreateApiView(CreateAPIView):
     queryset = Lessons.objects.all()
     serializer_class = LessonsSerializer
     permission_classes = (IsAuthenticated,)
-
-
 class LessonsListAPIView(ListAPIView):
     queryset = Lessons.objects.all()
     serializer_class = LessonsSerializer
     pagination_class = CustomPagination
-
-
 class LessonsRetrieveAPIView(RetrieveAPIView):
     queryset = Lessons.objects.all()
     serializer_class = LessonsSerializer
     permission_classes = (IsAuthenticated, IsModer | IsOwner)
-
-
 class LessonsUpdateAPIView(UpdateAPIView):
     queryset = Lessons.objects.all()
     serializer_class = LessonsSerializer
     permission_classes = (IsAuthenticated, IsModer | IsOwner)
-
-
 class LessonsDestroyAPIView(DestroyAPIView):
     queryset = Lessons.objects.all()
     serializer_class = LessonsSerializer
     permission_classes = (IsAuthenticated, IsOwner | ~IsModer)
-
-
 class SubscriptionView(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user

@@ -20,19 +20,9 @@ class Course(models.Model):
         verbose_name="Описание",
         help_text="Введите описание курса",
     )
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0.00,
-        verbose_name="Цена",
-        help_text="Укажите цену курса",
-    )
-
     class Meta:
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"
-
-
 class Lessons(models.Model):
     title = models.CharField(
         max_length=255,

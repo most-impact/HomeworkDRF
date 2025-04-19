@@ -28,7 +28,6 @@ class CourseTestCase(APITestCase):
         response = self.client.post("/lessons/create/", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Lessons.objects.count(), 2)
-
     def test_get_lessons(self):
         response = self.client.get("/lessons/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -47,19 +46,15 @@ class CourseTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.lesson.refresh_from_db()
         self.assertEqual(self.lesson.title, "Мишин урок")
-
     def test_delete_lesson(self):
         response = self.client.delete(f"/lessons/{self.lesson.id}/delete/")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Lessons.objects.count(), 0)
-
-
 class SubscriptionTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(email="user@example.com")
         self.course = Course.objects.create(title="Курс по Python")
         self.client.force_authenticate(user=self.user)
-
     def test_subscribe_to_course(self):
         data = {"course_id": self.course.id}
         response = self.client.post("/subscribe/", data, format="json")
@@ -68,7 +63,6 @@ class SubscriptionTestCase(APITestCase):
         subscription = Subscription.objects.first()
         self.assertEqual(subscription.user, self.user)
         self.assertEqual(subscription.course, self.course)
-
     def test_unsubscribe_from_course(self):
         Subscription.objects.create(user=self.user, course=self.course)
         data = {"course_id": self.course.id}

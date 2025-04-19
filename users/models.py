@@ -1,92 +1,85 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
-
-
-class User(AbstractUser):
-    username = None
-    email = models.EmailField(
-        unique=True, verbose_name="Почта", help_text="Укажите почту"
+class Course(models.Model):
+    title = models.CharField(
+        max_length=255,
+        verbose_name="Название",
+        help_text="Укажите название курса",
     )
-    phone = models.CharField(
-        max_length=35,
+    preview = models.ImageField(
+        upload_to="courses/previews",
         blank=True,
         null=True,
-        verbose_name="Телефон",
-        help_text="Укажите телефон",
+        verbose_name="Превью",
+        help_text="Загрузите изображение курса",
     )
-    city = models.CharField(
-        max_length=100,
+    description = models.TextField(
         blank=True,
         null=True,
-        verbose_name="Город",
-        help_text="Укажите город",
+        verbose_name="Описание",
+        help_text="Введите описание курса",
     )
-    avatar = models.ImageField(
-        upload_to="users/avatars",
-        blank=True,
-        null=True,
-        verbose_name="Аватарка",
-        help_text="Загрузите аватарку",
-    )
-
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
-
-    class Meta:
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
-
-
-class Payments(models.Model):
-    PAYMENT_STATUS = [
-        ("cash", "наличные"),
-        ("transfer", "перевод на счет"),
-    ]
-
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="user", verbose_name="Пользователь"
-    )
-    payment_date = models.DateField(null=True, blank=True, verbose_name="Дата оплаты")
-    paid_course = models.ForeignKey(
-        "course.Course",
-        on_delete=models.CASCADE,
-        related_name="course",
-        verbose_name="Оплаченный курс",
-        null=True,
-        blank=True,
-    )
-    separately_paid_lesson = models.ForeignKey(
-        "course.Lessons",
-        on_delete=models.CASCADE,
-        related_name="lesson",
-        verbose_name="Оплаченный урок",
-        null=True,
-        blank=True,
-    )
-    payment_amount = models.IntegerField(
-        default=0, verbose_name="Сумма оплаты", null=True, blank=True
-    )
-    payment_method = models.CharField(
-        max_length=10,
-        choices=PAYMENT_STATUS,
-        default="cash",
-        verbose_name="Способ оплаты",
-        null=True,
-        blank=True,
-    )
-    stripe_session_id = models.CharField(
-        max_length=400,
-        null=True,
-        blank=True,
-        verbose_name="ID сессии Stripe"
-    )
-    stripe_status = models.CharField(
-        max_length=20,
-        null=True,
-        blank=True,
-        verbose_name="Статус оплаты в Stripe"
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00,
+        verbose_name="Цена",
+        help_text="Укажите цену курса",
     )
 
     class Meta:
-        verbose_name = "Платеж"
-        verbose_name_plural = "Платежи"
+        verbose_name = "Курс"
+        verbose_name_plural = "Курсы"
+class Lessons(models.Model):
+    title = models.CharField(
+        max_length=255,
+        verbose_name="Название",
+        help_text="Укажите название урока",
+    )
+    description = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Описание",
+        help_text="Введите описание урока",
+    )
+    preview = models.ImageField(
+        upload_to="lessons/previews",
+        blank=True,
+        null=True,
+        verbose_name="Превью",
+        help_text="Загрузите изображение урока",
+    )
+    video_url = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Ссылка на видео",
+        help_text="Введите ссылку на видеоурок",
+    )
+    course = models.ForeignKey(
+        Course,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="lessons",
+        verbose_name="Курс",
+        help_text="Выберите курс, к которому относится урок",
+    )
+    owner = models.ForeignKey(
+        "users.User",
+        on_delete=models.CASCADE,
+        related_name="lessons",
+        null=True,
+        blank=True,
+        verbose_name="Владелец",
+        help_text="Укажите владельца урока",
+    )
+    class Meta:
+        verbose_name = "Урок"
+        verbose_name_plural = "Уроки"
+class Subscription(models.Model):
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.user.username} подписан на {self.course.title}"
+    class Meta:
+        unique_together = ("user", "course")
