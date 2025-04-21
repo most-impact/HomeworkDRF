@@ -1,4 +1,4 @@
-from models import Payments, User
+from users.models import Payments, User
 from rest_framework import serializers
 
 
