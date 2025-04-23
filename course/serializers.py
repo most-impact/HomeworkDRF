@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
-from course.validators import validate_youtube_link
 
 from course.models import Course, Lessons, Subscription
+from course.validators import validate_youtube_link
 
 
 class LessonDetailSerializer(ModelSerializer):

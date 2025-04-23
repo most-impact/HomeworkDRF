@@ -1,10 +1,11 @@
-from datetime import timezone, timedelta
+from datetime import timedelta, timezone
 
 from celery import shared_task
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
-from django.conf import settings
-from course.models import Subscription, Course
+
+from course.models import Course, Subscription
 
 User = get_user_model()
 

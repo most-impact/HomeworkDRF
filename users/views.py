@@ -1,15 +1,11 @@
-from rest_framework import viewsets, generics, filters
+from rest_framework import filters, generics, viewsets
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     RetrieveAPIView, UpdateAPIView)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from users.models import Payments, User
 from users.permissions import IsOwner
 from users.serializer import PaymentsSerializers, UserSerializer
-from rest_framework.generics import (
-    CreateAPIView,
-    RetrieveAPIView,
-    UpdateAPIView,
-    DestroyAPIView,
-)
 
 
 class PaymentsViewSet(viewsets.ModelViewSet):

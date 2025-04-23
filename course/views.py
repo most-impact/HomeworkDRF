@@ -1,27 +1,26 @@
 from datetime import timezone
+
 import stripe
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.generics import (
-    CreateAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-    UpdateAPIView,
-    DestroyAPIView,
-    get_object_or_404,
-)
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, RetrieveAPIView,
+                                     UpdateAPIView, get_object_or_404)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+
 from course.models import Course, Lessons, Subscription
 from course.paginations import CustomPagination
 from course.serializers import CourseSerializer, LessonsSerializer
 from users.models import Payments
 from users.permissions import IsModer, IsOwner
-from users.services import create_stripe_product, create_stripe_price, create_stripe_session
+from users.services import (create_stripe_price, create_stripe_product,
+                            create_stripe_session)
+
 from .tasks import send_course_update_notifications
 
 
