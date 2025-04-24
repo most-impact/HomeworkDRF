@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "homeworkdrf"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <your@email.com>"]
+readme = "README.md"
+packages = [{ include = "homeworkdrf" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.2"
+celery = "^5.5.1"
+dotenv = "^0.9.9"
+djangorestframework = "^3.16.0"
+djangorestframework-simplejwt = "^5.5.0"
+drf-yasg = "^1.21.10"
+django-celery-beat = "^2.8.0"
+stripe = "^12.0.1"
+pillow = "^11.2.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
