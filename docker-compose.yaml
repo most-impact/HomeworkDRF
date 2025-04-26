@@ -14,7 +14,6 @@ services:
     env_file:
       - .env
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
-
   db:
     image: postgres:16.0
     volumes:
@@ -34,12 +33,11 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    # Убрана строка command с requirepass, чтобы Redis работал без пароля
   celery:
     build: .
     command: celery -A config worker -l info
     volumes:
-      - .:/code
+      - .:/app
     depends_on:
       redis:
         condition: service_started
@@ -47,6 +45,30 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    # Убрали user: myuser
+  celery_beat:
+    build: .
+    command: celery -A config beat -l info
+    volumes:
+      - .:/app
+    depends_on:
+      redis:
+        condition: service_started
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+
+
 volumes:
   postgres_data:
   static_volume:

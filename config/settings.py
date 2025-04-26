@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-k(x1a9-z@g3eyep5rkm-b4ziy6*^w-w!01%an)3w_-!g=_xdw4")
 DEBUG = True
 ALLOWED_HOSTS = []
 # Application definition
@@ -66,13 +66,13 @@ REST_FRAMEWORK = {
 }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2" if not os.getenv("TEST_ENV") else "django.db.backends.sqlite3",
+        "NAME": os.getenv("POSTGRES_DB") if not os.getenv("TEST_ENV") else os.path.join(BASE_DIR, "test_db.sqlite3"),
+        "USER": os.getenv("POSTGRES_USER") if not os.getenv("TEST_ENV") else "",
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD") if not os.getenv("TEST_ENV") else "",
+        "HOST": os.getenv("DATABASE_HOST") if not os.getenv("TEST_ENV") else "",
+        "PORT": os.getenv("DATABASE_PORT", default="5432") if not os.getenv("TEST_ENV") else "",
     }
 }
 
