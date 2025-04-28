@@ -65,7 +65,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-ATABASES = {
+DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB", "drf-hw"),
