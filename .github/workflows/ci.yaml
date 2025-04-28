@@ -62,7 +62,7 @@ jobs:
           export SECRET_KEY='${{ secrets.SECRET_KEY }}'
           export POSTGRES_DB='drf-hw'
           export POSTGRES_USER='postgres'
-          export POSTGRES_PASSWORD='simplepassword123'
+          export POSTGRES_PASSWORD='1234'
           export DATABASE_HOST='localhost'
           export DATABASE_PORT='5432'
           export TEST_ENV=''  # Явно отключаем тестовую среду
@@ -78,7 +78,7 @@ jobs:
           export SECRET_KEY='${{ secrets.SECRET_KEY }}'
           export POSTGRES_DB='drf-hw'
           export POSTGRES_USER='postgres'
-          export POSTGRES_PASSWORD='simplepassword123'
+          export POSTGRES_PASSWORD='1234'
           export DATABASE_HOST='localhost'
           export DATABASE_PORT='5432'
           export TEST_ENV=''  # Явно отключаем тестовую среду
