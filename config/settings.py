@@ -67,14 +67,15 @@ REST_FRAMEWORK = {
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2" if not os.getenv("TEST_ENV") else "django.db.backends.sqlite3",
-        "NAME": os.getenv("POSTGRES_DB") if not os.getenv("TEST_ENV") else os.path.join(BASE_DIR, "test_db.sqlite3"),
-        "USER": os.getenv("POSTGRES_USER") if not os.getenv("TEST_ENV") else "",
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD") if not os.getenv("TEST_ENV") else "",
-        "HOST": os.getenv("DATABASE_HOST") if not os.getenv("TEST_ENV") else "",
-        "PORT": os.getenv("DATABASE_PORT", default="5432") if not os.getenv("TEST_ENV") else "",
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv("NAME"),
+        "USER": os.getenv("USER"),
+        "PASSWORD": os.getenv("PASSWORD"),
+        "HOST": os.getenv("HOST"),
+        "PORT": os.getenv("PORT"),
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
